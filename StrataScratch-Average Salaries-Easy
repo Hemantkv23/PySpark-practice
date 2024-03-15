@@ -1,0 +1,16 @@
+https://platform.stratascratch.com/coding/9917-average-salaries?code_type=6
+
+Compare each employee's salary with the average salary of the corresponding department.
+Output the department, first name, and salary of employees along with the average salary of that department.
+
+# Import your libraries
+import pyspark
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
+from pyspark.sql.window import Window
+
+# Start writing code
+window = Window.partitionBy("department")
+employee = employee.withColumn("avg_dept_sal", avg("salary").over(window)).select("department", "first_name", "salary", "avg_dept_sal").toPandas()
+
+# To validate your solution, convert your final pySpark df to a pandas df
