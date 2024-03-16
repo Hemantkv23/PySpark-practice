@@ -1,0 +1,23 @@
+https://platform.stratascratch.com/coding/9942-largest-olympics?code_type=6
+
+Find the Olympics with the highest number of athletes. The Olympics game is a combination of the year and the season, and is found in the 'games' column. Output the Olympics along with the corresponding number of athletes.
+
+Table: olympics_athletes_events
+
+Sol-
+# Import your libraries
+import pyspark
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
+
+# Start writing code
+olympics_athletes_events = olympics_athletes_events.groupBy("games")\
+.agg(countDistinct("id").alias("no_of_athelets")).orderBy(desc("no_of_athelets"))
+
+olympics_athletes_events = olympics_athletes_events\
+.filter(
+    olympics_athletes_events["no_of_athelets"]==olympics_athletes_events\
+    .select(max("no_of_athelets")).first()[0] )
+
+# To validate your solution, convert your final pySpark df to a pandas df
+olympics_athletes_events.toPandas()
