@@ -1,0 +1,18 @@
+https://platform.stratascratch.com/coding/9972-find-the-base-pay-for-police-captains?code_type=6
+
+Find the base pay for Police Captains.
+Output the employee name along with the corresponding base pay.
+
+Table: sf_public_salaries
+
+Sol-
+
+# Import your libraries
+import pyspark
+from pyspark.sql.functions import *
+
+# Start writing code
+sf_public_salaries = sf_public_salaries.filter(col("jobtitle")=="CAPTAIN III (POLICE DEPARTMENT)" ).select("employeename", "basepay").distinct()
+
+# To validate your solution, convert your final pySpark df to a pandas df
+sf_public_salaries.toPandas()
