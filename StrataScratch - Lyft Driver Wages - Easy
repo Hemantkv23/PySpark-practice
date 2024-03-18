@@ -1,0 +1,17 @@
+https://platform.stratascratch.com/coding/10003-lyft-driver-wages?code_type=6
+
+Find all Lyft drivers who earn either equal to or less than 30k USD or equal to or more than 70k USD.
+Output all details related to retrieved records.
+
+Table: lyft_drivers
+
+Sol-
+# Import your libraries
+import pyspark
+from pyspark.sql.functions import *
+
+# Start writing code
+lyft_drivers = lyft_drivers.filter((col("yearly_salary")<=30000) | (col("yearly_salary")>=70000))
+
+# To validate your solution, convert your final pySpark df to a pandas df
+lyft_drivers.toPandas()
