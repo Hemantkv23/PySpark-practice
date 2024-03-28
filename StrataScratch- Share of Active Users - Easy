@@ -1,0 +1,18 @@
+https://platform.stratascratch.com/coding/2005-share-of-active-users?code_type=6
+
+Output share of US users that are active. Active users are the ones with an "open" status in the table.
+
+Table: fb_active_users
+
+
+Solution-
+
+# Import your libraries
+from pyspark.sql.functions import *
+
+# Start writing code
+fb_active_users = fb_active_users.filter(col("country")=="USA")\
+.agg((count(when(col("status")=="open",1))/count("*"))\
+.alias("active_user_share"))
+
+fb_active_users.toPandas()
