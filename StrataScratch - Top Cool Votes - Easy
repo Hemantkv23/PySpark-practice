@@ -1,0 +1,15 @@
+https://platform.stratascratch.com/coding/10060-top-cool-votes?code_type=6
+
+Find the review_text that received the highest number of  'cool' votes.
+Output the business name along with the review text with the highest numbef of 'cool' votes.
+
+Table: yelp_reviews
+
+Solution-
+
+from pyspark.sql.functions import *
+
+temp = yelp_reviews.select(max(col("cool"))).first()[0]
+yelp_reviews = yelp_reviews\
+.filter(col("cool")==temp)\
+.select("business_name", "review_text").toPandas()
