@@ -1,0 +1,20 @@
+https://platform.stratascratch.com/coding/10353-workers-with-the-highest-salaries?code_type=6
+
+You have been asked to find the job titles of the highest-paid employees.
+
+
+Your output should include the highest-paid title or multiple titles with the same salary.
+
+Tables: worker, title
+
+Solution-
+
+from pyspark.sql.functions import *
+
+worker = worker.select("worker_id", "salary")
+temp = worker.agg(max("salary")).first()[0]
+worker = worker.filter(col("salary")==temp).select("worker_id")
+
+df = title.join(worker, title["worker_ref_id"]==worker["worker_id"]).select("worker_title")
+
+df.toPandas()
