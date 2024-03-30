@@ -1,0 +1,14 @@
+https://platform.stratascratch.com/coding/10087-find-all-posts-which-were-reacted-to-with-a-heart?code_type=6
+
+Find all posts which were reacted to with a heart. For such posts output all columns from facebook_posts table.
+
+Tables: facebook_reactions, facebook_posts
+
+Solution - 
+from pyspark.sql.functions import *
+
+facebook_reactions = facebook_reactions.select("post_id","reaction").filter(col("reaction")=="heart").distinct()
+
+df =facebook_posts.join(facebook_reactions, facebook_posts["post_id"]==facebook_reactions["post_id"],"left_semi")
+
+df.toPandas()
