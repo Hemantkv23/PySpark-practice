@@ -1,0 +1,15 @@
+https://platform.stratascratch.com/coding/10078-find-matching-hosts-and-guests-in-a-way-that-they-are-both-of-the-same-gender-and-nationality?code_type=6
+
+Find matching hosts and guests pairs in a way that they are both of the same gender and nationality.
+Output the host id and the guest id of matched pair.
+
+Solution-
+
+from pyspark.sql.functions import *
+
+airbnb_hosts = airbnb_hosts.select("host_id", "nationality","gender")
+airbnb_guests = airbnb_guests.select("guest_id", "nationality","gender")
+
+df = airbnb_hosts.join(airbnb_guests , (airbnb_hosts["nationality"]==airbnb_guests["nationality"]) & (airbnb_hosts["gender"]==airbnb_guests["gender"])).select("host_id", "guest_id").distinct()
+
+df.toPandas()
