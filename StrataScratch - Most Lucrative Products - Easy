@@ -1,0 +1,18 @@
+https://platform.stratascratch.com/coding/2119-most-lucrative-products?code_type=6
+
+You have been asked to find the 5 most lucrative products in terms of total revenue for the first half of 2022 (from January to June inclusive).
+
+
+Output their IDs and the total revenue.
+
+Table: online_orders
+
+Solution-
+
+from pyspark.sql.functions import *
+
+online_orders = online_orders.select("product_id","date","cost_in_dollars","units_sold")\
+.filter(month(col("date"))<=6 )
+df = online_orders.groupBy("product_id")\
+.agg(sum(col("units_sold")*col("cost_in_dollars")).alias("total_revenue")).orderBy(desc("total_revenue")).limit(5)
+df.toPandas()
