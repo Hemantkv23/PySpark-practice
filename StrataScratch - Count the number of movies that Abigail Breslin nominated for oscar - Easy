@@ -1,0 +1,15 @@
+https://platform.stratascratch.com/coding/10128-count-the-number-of-movies-that-abigail-breslin-nominated-for-oscar?code_type=6
+
+Count the number of movies that Abigail Breslin was nominated for an oscar.
+
+Table: oscar_nominees
+
+Solution-
+
+from pyspark.sql.functions import *
+
+df = oscar_nominees.select("nominee", "movie")\
+    .filter(col("nominee")=="Abigail Breslin")\
+    .distinct().agg(count("movie"))
+    
+df.toPandas()
