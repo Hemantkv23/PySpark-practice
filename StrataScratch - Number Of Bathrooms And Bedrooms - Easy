@@ -1,0 +1,14 @@
+https://platform.stratascratch.com/coding/9622-number-of-bathrooms-and-bedrooms?code_type=6
+
+Find the average number of bathrooms and bedrooms for each city’s property types. Output the result along with the city name and the property type.
+
+Table: airbnb_search_details
+
+Solution-
+
+from pyspark.sql.functions import *
+
+df = airbnb_search_details.select("city","property_type", "bathrooms", "bedrooms")\
+    .groupBy(col("city"), col("property_type"))\
+    .agg(avg("bathrooms").alias("avg_bathrooms"), avg("bedrooms").alias("avg_bedrooms"))
+df.toPandas()
