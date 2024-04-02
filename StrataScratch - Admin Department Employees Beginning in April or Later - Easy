@@ -1,0 +1,13 @@
+https://platform.stratascratch.com/coding/9845-find-the-number-of-employees-working-in-the-admin-department?code_type=6
+
+Find the number of employees working in the Admin department that joined in April or later.
+Table: worker
+
+Solution-
+from pyspark.sql.functions import *
+
+df = worker.select("worker_id", "joining_date", "department")\
+        .filter((col("department")=='Admin') & (month(col("joining_date"))>=4))\
+        .agg(count(col("worker_id")).alias("worker_count"))
+        
+df.toPandas()
