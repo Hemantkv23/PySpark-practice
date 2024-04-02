@@ -1,0 +1,17 @@
+https://platform.stratascratch.com/coding/9847-find-the-number-of-workers-by-department?code_type=6
+
+Find the number of workers by department who joined in or after April.
+Output the department name along with the corresponding number of workers.
+Sort records based on the number of workers in descending order.
+
+Table: worker
+
+Solution-
+from pyspark.sql.functions import *
+
+df = worker.select("worker_id", "joining_date", "department")\
+        .filter(month(col("joining_date"))>=4)\
+        .groupBy("department").agg(count("worker_id").alias("worker_count"))\
+        .orderBy(desc("worker_count"))
+        
+df.toPandas()
