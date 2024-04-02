@@ -1,0 +1,17 @@
+https://platform.stratascratch.com/coding/10156-number-of-units-per-nationality?code_type=6
+
+Find the number of apartments per nationality that are owned by people under 30 years old.
+Output the nationality along with the number of apartments.
+Sort records by the apartments count in descending order.
+
+Tables: airbnb_hosts, airbnb_units
+
+Solution-
+from pyspark.sql.functions import *
+
+df_h = airbnb_hosts.filter(col("age")<30).select("host_id","nationality").distinct()
+df_u = airbnb_units.filter(col("unit_type")=='Apartment').select("host_id")
+df = df_h.join(df_u, df_h["host_id"]==df_u["host_id"])\
+        .groupBy("nationality").agg(count("*").alias("apartment_count"))\
+        .orderBy(desc("apartment_count"))
+df.toPandas()
