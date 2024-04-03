@@ -1,0 +1,16 @@
+https://platform.stratascratch.com/coding/10176-bikes-last-used?code_type=6
+
+Find the last time each bike was in use. Output both the bike number and the date-timestamp of the bike's last use (i.e., the date-time the bike was returned). Order the results by bikes that were most recently used.
+
+Table: dc_bikeshare_q1_2012
+
+Solution-
+from pyspark.sql.functions import *
+
+#spark = SparkSession.builder.appName("practice").getOrCreate()
+#df = spark.read.csv("file_name_path").option("header","true").option("inferschema","true")
+
+df = dc_bikeshare_q1_2012.select("bike_number","end_time")\
+        .groupBy("bike_number").agg(max("end_time").alias("last_used")).orderBy(desc("last_used"))
+df.toPandas()
+#df.write.csv("filw_name", "header"=True).save()
