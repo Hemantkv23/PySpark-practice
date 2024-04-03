@@ -1,0 +1,23 @@
+https://platform.stratascratch.com/coding/10308-salaries-differences?code_type=6
+
+Write a query that calculates the difference between the highest salaries found in the marketing and engineering departments. Output just the absolute difference in salaries.
+Tables: db_employee, db_dept
+
+Solution-
+from pyspark.sql.functions import *
+
+#spark = SparkSession.builder.appName("practice").getOrCreate()
+#df = spark.read.csv("path_name").option("inferschema",true).option("header",true)
+
+df_dpt = db_dept.filter(col("department").isin("marketing","engineering"))
+db_employee = db_employee.select("department_id","salary")
+#df = db_employee.join(brodcast(df_dept),db_employee["department_id"]==df_dpt["id"])
+df = db_employee.join(df_dpt,db_employee["department_id"]==df_dpt["id"])\
+        .agg(
+            max(when(col("department")=='marketing', col("salary"))).alias("mark_max"),
+            max(when(col("department")=='engineering', col("salary"))).alias("engg_max")
+            )\
+            .withColumn("salary_difference", abs(col("mark_max") - col("engg_max")))\
+            .select("salary_difference")
+        
+df.toPandas()
