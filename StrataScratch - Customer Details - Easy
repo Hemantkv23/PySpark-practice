@@ -1,0 +1,20 @@
+https://platform.stratascratch.com/coding/9891-customer-details?code_type=6
+
+Find the details of each customer regardless of whether the customer made an order. Output the customer's first name, last name, and the city along with the order details.
+Sort records based on the customer's first name and the order details in ascending order.
+Tables: customers, orders
+
+Solution-
+
+from pyspark.sql.functions import *
+
+#spark = SparkSession.builder.appName("practice").getOrCreate()
+#df = spark.read.csv("file_path_name").option("inferschema",true).option("header",true)
+
+df_c = customers.select("id","first_name","last_name","city")
+df_o = orders.select("cust_id","order_details")
+df = df_c.join(df_o, df_c["id"]==df_o["cust_id"],"left")\
+        .select("first_name","last_name","city","order_details")
+
+df.toPandas()
+#df.write.mode("overwrite").csv("path_name")
