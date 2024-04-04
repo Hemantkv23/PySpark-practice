@@ -1,0 +1,18 @@
+https://platform.stratascratch.com/coding/9650-find-the-top-10-ranked-songs-in-2010?code_type=6
+
+What were the top 10 ranked songs in 2010?
+Output the rank, group name, and song name but do not show the same song twice.
+Sort the result based on the year_rank in ascending order.
+Table: billboard_top_100_year_end
+
+Solution-
+from pyspark.sql.functions import *
+
+#spark = SparkSession.builder.appName("practive").getOrCreate()
+#df = spark.read.csv("file_path").option("inferschema",true).option("header",true)
+
+df = billboard_top_100_year_end.filter((col("year")==2010) & (col("year_rank")<=10))\
+.select("year_rank","group_name","song_name").distinct().orderBy("year_rank")
+
+df.toPandas()
+#df.write.mode("overwrite").csv("path_name")
