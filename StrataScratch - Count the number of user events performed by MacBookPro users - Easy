@@ -1,0 +1,21 @@
+https://platform.stratascratch.com/coding/9653-count-the-number-of-user-events-performed-by-macbookpro-users?code_type=6
+
+Count the number of user events performed by MacBookPro users.
+Output the result along with the event name.
+Sort the result based on the event count in the descending order.
+Table: playbook_events
+
+
+from pyspark.sql.functions import *
+
+#spark = SparkSession.builder.appName("practive").getOrCreate()
+#df = spark.read.csv("file_path").option("inferschema",true).option("header",true)
+
+df = playbook_events.filter(col("device")=='macbook pro')\
+        .select("event_name","occurred_at")\
+        .groupBy("event_name").agg(count("occurred_at").alias("event_count"))\
+        .orderBy(desc("event_count"))
+        
+df.toPandas()
+
+#df.write.csv("file_path").mode("append")
