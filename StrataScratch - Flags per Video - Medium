@@ -1,0 +1,24 @@
+https://platform.stratascratch.com/coding/2102-flags-per-video?code_type=6
+
+For each video, find how many unique users flagged it. A unique user can be identified using the combination of their first name and last name. Do not consider rows in which there is no flag ID.
+Table: user_flags
+
+Solution-
+
+from pyspark.sql.functions import *
+
+# spark = SparkSession.builder.appName("practice").getOrCreate()
+# df = spark.read.csv("file_path_name").option("inferschema", true).option("header", true)
+
+# df = user_flags.withColumn("user" concat_ws(' ', "user_firstname", "user_lastname")).select("user", "video_id", "flag_id").filter(!col("flag_id").isNull())
+
+df = user_flags.filter(~col("flag_id").isNull())\
+        .withColumn("user", concat_ws(' ', "user_firstname", "user_lastname"))\
+        .select("user", "video_id")
+
+df = df.groupBy("video_id")\
+        .agg(countDistinct("user").alias("num_unique_users"))
+
+df.toPandas()
+
+# df.write.orc("file_path").save()
