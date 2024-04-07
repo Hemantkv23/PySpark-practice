@@ -1,0 +1,17 @@
+https://platform.stratascratch.com/coding/9610-find-students-with-a-median-writing-score?code_type=6
+
+Output ids of students with a median score from the writing SAT.
+Table: sat_scores
+
+Solution-
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+window = Window.orderBy("sat_writing")
+df = sat_scores.select("student_id", "sat_writing")\
+    .withColumn("row_num", dense_rank().over(window)).select("row_num", "student_id")
+
+median = df.approxQuantile("row_num", [0.5], 0.001)[0]
+df = df.filter(col("row_num")==median).select("student_id")
+
+df.toPandas()
