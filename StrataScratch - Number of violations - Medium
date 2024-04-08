@@ -1,0 +1,19 @@
+https://platform.stratascratch.com/coding/9728-inspections-that-resulted-in-violations?code_type=6
+
+You're given a dataset of health inspections. Count the number of violation in an inspection in 'Roxanne Cafe' for each year. If an inspection resulted in a violation, there will be a value in the 'violation_id' column. Output the number of violations by year in ascending order.
+Table: sf_restaurant_health_violations
+
+Solution-
+
+from pyspark.sql.functions import *
+
+df = sf_restaurant_health_violations.select("business_name","inspection_date","violation_id")\
+    .filter(col("business_name")=="Roxanne Cafe")\
+    .withColumn("year", year(col("inspection_date")))\
+    .select("year","violation_id")\
+    .groupBy("year")\
+    .agg(count("violation_id").alias("violation_count"))\
+    .orderBy("year")
+    
+
+df.toPandas()
