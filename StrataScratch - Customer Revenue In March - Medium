@@ -1,0 +1,16 @@
+https://platform.stratascratch.com/coding/9782-customer-revenue-in-march?code_type=6
+
+Calculate the total revenue from each customer in March 2019. Include only customers who were active in March 2019.
+Output the revenue along with the customer id and sort the results based on the revenue in descending order.
+Table: orders
+
+Solution-
+from pyspark.sql.functions import *
+ 
+df=orders.select("cust_id","total_order_cost","order_date")\
+        .filter((month(col("order_date"))==3) & (year(col("order_date"))==2019))\
+        .select("cust_id","total_order_cost")\
+        .groupBy("cust_id").agg(sum("total_order_cost").alias("total_revenue"))\
+        .orderBy(desc("total_revenue"))
+ 
+df.toPandas()
