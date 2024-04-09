@@ -1,0 +1,21 @@
+https://platform.stratascratch.com/coding/9781-find-the-rate-of-processed-tickets-for-each-type?code_type=6
+
+Find the rate of processed tickets for each type.
+Table: facebook_complaints
+
+Solution-
+
+from pyspark.sql.functions import *
+
+df = facebook_complaints.withColumn("processed1", when(col("processed")=='True', 1).otherwise(0))
+
+df = df.select("type", "processed1")\
+    .groupBy("type")\
+    .agg(sum("processed1").alias("total_processed"),
+    count(col("processed1")).alias("total_count"))
+
+df = df.withColumn("processed_rate", round(col("total_processed")*1.0/col("total_count"),3)).select("type", "processed_rate")
+
+df.toPandas()
+
+
