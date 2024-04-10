@@ -1,0 +1,17 @@
+https://platform.stratascratch.com/coding/9817-find-the-number-of-times-each-word-appears-in-drafts?code_type=6
+
+Find the number of times each word appears in drafts.
+Output the word along with the corresponding number of occurrences.
+
+Table: google_file_store
+
+Solution-
+
+from pyspark.sql.functions import *
+
+df = google_file_store\
+        .filter(col("filename").like('draft%')).select("contents")\
+        .withColumn("contents", explode(split(regexp_replace(lower(col("contents")), r"[\.,]", ""), " ")) )\
+        .groupBy("contents").agg(count("contents").alias("nentry"))
+
+df.toPandas()
