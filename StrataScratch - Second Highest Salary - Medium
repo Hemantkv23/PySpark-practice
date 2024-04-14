@@ -1,0 +1,15 @@
+https://platform.stratascratch.com/coding/9892-second-highest-salary?code_type=6
+
+Find the second highest salary of employees.
+Table: employee
+
+Solution-
+
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+df = employee.select("salary")\
+        .withColumn("rnk", dense_rank().over(Window.orderBy(desc("salary"))))\
+        .filter(col("rnk")==2).select("salary")
+        
+df.toPandas()
