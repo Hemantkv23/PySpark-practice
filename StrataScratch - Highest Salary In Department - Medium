@@ -1,0 +1,17 @@
+https://platform.stratascratch.com/coding/9897-highest-salary-in-department?code_type=6
+
+Find the employee with the highest salary per department.
+Output the department name, employee's first name along with the corresponding salary.
+Table: employee
+
+Solution-
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+window = Window.partitionBy("department").orderBy(desc("salary"))
+
+df = employee.select("department","first_name", "salary")
+df = df.withColumn("rnk", rank().over(window))\
+        .filter(col("rnk")==1).drop(col("rnk"))
+
+df.toPandas()
