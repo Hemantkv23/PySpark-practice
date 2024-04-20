@@ -1,0 +1,16 @@
+https://platform.stratascratch.com/coding/9905-highest-target-under-manager?code_type=6
+
+Find the highest target achieved by the employee or employees who works under the manager id 13. Output the first name of the employee and target achieved. The solution should show the highest target achieved under manager_id=13 and which employee(s) achieved it.
+Table: salesforce_employees
+
+Solution-
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+df = salesforce_employees.select("first_name", "target", "manager_id")\
+        .filter(col("manager_id")==13).drop(col("manager_id"))
+        
+df = df.withColumn("rnk", rank().over(Window.orderBy(desc("target"))))\
+        .filter(col("rnk")==1).drop(col("rnk"))
+        
+df.toPandas()
