@@ -1,0 +1,24 @@
+https://platform.stratascratch.com/coding/9915-highest-cost-orders?code_type=6
+
+Find the customer with the highest daily total order cost between 2019-02-01 to 2019-05-01. If customer had more than one order on a certain day, sum the order costs on daily basis. Output customer's first name, total cost of their items, and the date.
+For simplicity, you can assume that every first name in the dataset is unique.
+Tables: customers, orders
+
+Solution-
+
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+df_o = orders.drop("order_details","id")\
+        .filter( (col("order_date")>= '2019-02-01') & (col("order_date")<= '2019-05-01') )\
+        .groupBy("cust_id", "order_date").agg(sum("total_order_cost").alias("max_cost"))\
+        .withColumn("rnk", rank().over(Window.orderBy(desc("max_cost"))))\
+        .filter(col("rnk")==1)\
+        .drop("rnk")
+
+
+df_c = customers.drop("last_name", "city", "address", "phone_number")
+
+df = df_c.join(df_o, df_c["id"]==df_o["cust_id"]).drop("id", "cust_id")
+
+df.toPandas()
