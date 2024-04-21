@@ -1,0 +1,19 @@
+https://platform.stratascratch.com/coding/10026-find-all-wineries-which-produce-wines-by-possessing-aromas-of-plum-cherry-rose-or-hazelnut?code_type=6
+
+Find all wineries which produce wines by possessing aromas of plum, cherry, rose, or hazelnut. To make it more simple, look only for singular form of the mentioned aromas. HINT: if one of the specified words is just a substring of another word, this should not be a hit, but a miss.
+
+Example Description: Hot, tannic and simple, with cherry jam and currant flavors accompanied by high, tart acidity and chile-pepper alcohol heat.
+Therefore the winery Bella Piazza is expected in the results.
+
+Table: winemag_p1
+
+Solution - 
+
+from pyspark.sql.functions import *
+
+df = winemag_p1.select("winery", "description")\
+        .filter(lower("description").rlike('\\bplum\\b|\\bcherry\\b|\\brose\\b|\\bhazelnut\\b'))\
+        .drop("description").dropDuplicates()
+        
+df.toPandas()
+
