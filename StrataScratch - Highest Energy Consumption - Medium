@@ -1,0 +1,19 @@
+https://platform.stratascratch.com/coding/10064-highest-energy-consumption?code_type=6
+
+Find the date with the highest total energy consumption from the Meta/Facebook data centers. Output the date along with the total energy consumption across all data centers.
+
+Tables: fb_eu_energy, fb_asia_energy, fb_na_energy
+
+Solution-
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+
+df = fb_eu_energy.unionAll(fb_asia_energy).unionAll(fb_na_energy)
+df = df.groupBy("date").agg(sum("consumption").alias("total_consumption"))\
+        .withColumn("rnk", rank().over(Window.orderBy(desc("total_consumption"))))\
+        .filter(col("rnk")==1).drop("rnk")
+        
+
+df.toPandas()
+
