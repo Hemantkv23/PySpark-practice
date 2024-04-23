@@ -1,0 +1,20 @@
+https://platform.stratascratch.com/coding/10077-income-by-title-and-gender?code_type=6
+
+Find the average total compensation based on employee titles and gender. Total compensation is calculated by adding both the salary and bonus of each employee. However, not every employee receives a bonus so disregard employees without bonuses in your calculation. Employee can receive more than one bonus.
+Output the employee title, gender (i.e., sex), along with the average total compensation.
+
+Tables: sf_employee, sf_bonus
+
+from pyspark.sql.functions import *
+
+df_emp = sf_employee.select("id", "employee_title","salary","sex")
+sf_bonus = sf_bonus.groupBy("worker_ref_id").agg(sum(col("bonus")).alias("bonus"))
+
+df = df_emp.join(sf_bonus, df_emp["id"]==sf_bonus["worker_ref_id"])\
+    .withColumn("total_comp", col("salary")+col("bonus"))\
+    .select("employee_title", "sex", "total_comp")
+
+df = df.groupBy("employee_title", "sex").agg(avg("total_comp").alias("avg_total_comp"))
+
+
+df.toPandas()
