@@ -1,0 +1,18 @@
+https://platform.stratascratch.com/coding/10134-spam-posts?code_type=6
+
+Calculate the percentage of spam posts in all viewed posts by day. A post is considered a spam if a string "spam" is inside keywords of the post. Note that the facebook_posts table stores all posts posted by users. The facebook_post_views table is an action table denoting if a user has viewed a post.
+
+Tables: facebook_posts, facebook_post_views
+
+Solution-
+
+from pyspark.sql.functions import *
+
+df_post = facebook_posts.select("post_id", "post_keywords","post_date")
+df = facebook_post_views.join(df_post, facebook_post_views["post_id"]==df_post["post_id"])\
+        .select("post_date","post_keywords").distinct()\
+        .withColumn("is_spam", when( lower(col("post_keywords")).rlike('spam'),1 ).otherwise(0)  )\
+        .select("post_date", "is_spam")\
+        .groupBy("post_date").agg((100.0*sum("is_spam")/count("is_spam")).alias("spam_share"))
+
+df.toPandas()
