@@ -1,0 +1,29 @@
+https://platform.stratascratch.com/coding/10352-users-by-avg-session-time?code_type=6
+
+Calculate each user's average session time. A session is defined as the time difference between a page_load and page_exit. For simplicity, assume a user has only 1 session per day and if there are multiple of the same events on that day, consider only the latest page_load and earliest page_exit, with an obvious restriction that load time event should happen before exit time event . Output the user_id and their average session time.
+
+Table: facebook_web_log
+
+Solution-
+
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+df = facebook_web_log.filter(col("action").isin("page_load", "page_exit"))\
+        .withColumn("date_c", to_date(col("timestamp"), "%YYYY-%MM-%DD"))
+        
+# window = Window.partitionBy("user_id", "date_c")        
+        
+df = df.groupBy("user_id", "date_c")\
+        .agg(   
+            max( when(col("action")=="page_load", col("timestamp"))).alias("page_load_timestamp"),
+            min( when(col("action")=="page_exit", col("timestamp"))).alias("page_exit_timestamp")
+            )\
+        .drop("date_c")\
+        .withColumn("time_diff", (col("page_exit_timestamp")-col("page_load_timestamp")) )\
+        .dropna(subset=["time_diff"])\
+        .select("user_id", "time_diff")
+
+df = df.groupBy("user_id").agg(avg("time_diff").alias("duration"))
+
+df.toPandas()
