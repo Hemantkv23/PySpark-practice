@@ -1,0 +1,20 @@
+https://platform.stratascratch.com/coding/10322-finding-user-purchases?code_type=6
+
+Write a query that'll identify returning active users. A returning active user is a user that has made a second purchase within 7 days of any other of their purchases. Output a list of user_ids of these returning active users.
+Table: amazon_transactions
+
+Solution-
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+df = amazon_transactions.select("user_id", "created_at") 
+window = Window.partitionBy("user_id").orderBy("created_at")
+
+df = df.withColumn("next_purchase_date", lead("created_at").over(window))\
+        .dropna(subset=["next_purchase_date"])\
+        .filter(
+            (datediff(col("next_purchase_date"), col("created_at"))<=7)
+            )\
+        .select("user_id").distinct()    
+
+df.toPandas()
