@@ -1,0 +1,32 @@
+https://platform.stratascratch.com/coding/10318-new-products?code_type=6
+
+You are given a table of product launches by company by year. Write a query to count the net difference between the number of products companies launched in 2020 with the number of products companies launched in the previous year. Output the name of the companies and a net difference of net products released for 2020 compared to the previous year.
+Table: car_launches
+
+Solution - 
+
+1st approch -
+
+from pyspark.sql.functions import *
+
+df = car_launches.filter(col("year").isin('2019','2020'))
+df = df.groupBy("company_name").agg(
+    count( when(col("year")=='2020', col("product_name")) ).alias("products_2020"),
+    count( when(col("year")=='2019', col("product_name")) ).alias("products_2019")
+    )\
+    .select("company_name", (col("products_2020")-col("products_2019")).alias("net_products")  )
+
+df.toPandas()
+
+2nd approch - 
+
+# Import your libraries
+from pyspark.sql.functions import *
+
+# Start writing code
+car_launches = car_launches.withColumn("diff", when(col("year")==2019, -1).otherwise(1) )
+
+car_launches = car_launches.groupBy("company_name").agg(sum("diff").alias("net_diff"))
+
+# To validate your solution, convert your final pySpark df to a pandas df
+car_launches.toPandas()
